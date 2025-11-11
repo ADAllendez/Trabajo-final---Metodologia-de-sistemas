@@ -47,19 +47,20 @@ ShadCN/UI (componentes estilizados)
 
 ✅ Frontend moderno y responsive con React y TailwindCSS
 
-⚙️ Estructura del proyecto
+## ⚙️ Estructura del proyecto
+
 / (raíz del repositorio)
-├── backend/        # Proyecto FastAPI (Python)
-│   ├── app/
-│   ├── venv/
-│   └── requirements.txt
+├── backend/ # Proyecto FastAPI (Python)
+│ ├── app/
+│ ├── venv/
+│ └── requirements.txt
 │
-├── frontend/       # Proyecto React (Vite)
-│   ├── src/
-│   ├── package.json
-│   └── node_modules/
+├── frontend/ # Proyecto React (Vite)
+│ ├── src/
+│ ├── package.json
+│ └── node_modules/
 │
-├── run.sh          # Script para instalar y ejecutar todo automáticamente
+├── run.sh # Script para instalar y ejecutar todo automáticamente
 └── README.md
 
 ▶️ Ejecución de la aplicación

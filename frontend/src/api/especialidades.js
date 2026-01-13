@@ -1,11 +1,11 @@
 import api from "./client";
 
 export async function getEspecialidades() {
-  const res = await api.get("/especialidades");
+  const res = await api.get("/especialidades/");
   return res.data;
 }
 export async function crearEspecialidad(especialidad) {
-  const res = await api.post("/especialidades", especialidad);
+  const res = await api.post("/especialidades/", especialidad);
   return res.data;
 }
 

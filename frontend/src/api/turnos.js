@@ -1,12 +1,12 @@
 import api from "./client";
 
 export async function getTurnos() {
-  const res = await api.get("/turnos");
+  const res = await api.get("/turnos/");
   return res.data;
 }
 
 export async function crearTurno(data) {
-  const res = await api.post("/turnos", data);
+  const res = await api.post("/turnos/", data);
   return res.data;
 }
 

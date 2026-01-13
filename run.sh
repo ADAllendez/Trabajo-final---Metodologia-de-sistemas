@@ -6,53 +6,74 @@ echo "======================================"
 
 # --- BACKEND SETUP ---
 echo ""
-echo "📦 Verificando entorno backend..."
+echo "📦 Configurando entorno backend..."
 
 cd backend || exit
 
 # Crear entorno virtual si no existe
 if [ ! -d "venv" ]; then
   echo "🧰 Creando entorno virtual..."
-  python3 -m venv venv
+  python -m venv venv
 fi
 
-# Activar entorno virtual
-source venv/bin/activate
-
-# Instalar dependencias si falta algo
-if [ -f "requirements.txt" ]; then
-  echo "📥 Instalando dependencias backend..."
-  pip install --upgrade pip
-  pip install -r requirements.txt
+# Activar entorno virtual según sistema operativo
+if [[ "$OSTYPE" == "msys" || "$OSTYPE" == "win32" ]]; then
+  source venv/Scripts/activate
 else
-  echo "⚠️ No se encontró requirements.txt en backend/"
+  source venv/bin/activate
 fi
+
+# Crear requirements.txt si no existe
+if [ ! -f "requirements.txt" ]; then
+  echo "📝 Creando archivo requirements.txt..."
+  cat > requirements.txt <<EOL
+fastapi
+uvicorn
+sqlalchemy
+pydantic
+python-multipart
+aiofiles
+reportlab
+openpyxl
+EOL
+fi
+
+# Instalar dependencias
+echo "📥 Instalando dependencias del backend..."
+pip install --upgrade pip
+pip install -r requirements.txt
 
 # Iniciar backend en segundo plano
 echo "🩺 Iniciando servidor FastAPI..."
-uvicorn app.main:app --reload --port 8000 &
+uvicorn app.main:app --reload &
 BACK_PID=$!
 
 cd ..
 
 # --- FRONTEND SETUP ---
 echo ""
-echo "💻 Verificando entorno frontend..."
+echo "💻 Configurando entorno frontend..."
 
 cd frontend || exit
 
 # Instalar dependencias npm si no existen
 if [ ! -d "node_modules" ]; then
-  echo "📥 Instalando dependencias frontend..."
+  echo "📦 Instalando dependencias frontend..."
   npm install
 else
   echo "✅ Dependencias frontend ya instaladas."
 fi
 
-# Iniciar frontend (Vite)
-echo "🌐 Iniciando servidor React..."
-npm run dev &
+# Verificar que existe script "start"
+if ! grep -q "\"start\":" package.json; then
+  echo "⚠️  No se encontró script 'start' en package.json"
+  echo "🛠️  Agregalo dentro de 'scripts': { \"start\": \"react-scripts start\" }"
+  exit 1
+fi
 
+# Iniciar frontend (React)
+echo "🌐 Iniciando servidor React..."
+npm start &
 FRONT_PID=$!
 
 cd ..
@@ -61,7 +82,7 @@ cd ..
 echo ""
 echo "======================================"
 echo " ✅ Backend corriendo en: http://localhost:8000"
-echo " ✅ Frontend corriendo en: http://localhost:5173"
+echo " ✅ Frontend corriendo en: http://localhost:3000"
 echo "======================================"
 echo ""
 echo "Presiona CTRL+C para detener ambos servidores."

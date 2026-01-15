@@ -3,7 +3,6 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import RedirectResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import text
-from starlette.middleware.proxy_headers import ProxyHeadersMiddleware
 
 from app.config.database import engine, Base, get_db
 from app.routers import paciente, especialidad, medico, turno
@@ -13,15 +12,26 @@ app = FastAPI(
     version="1.0.0"
 )
 
-# Registrar ProxyHeadersMiddleware para que FastAPI use X-Forwarded-* (scheme, host)
-app.add_middleware(ProxyHeadersMiddleware, trusted_hosts="*")
-
-# ✅ Middleware para forzar HTTPS en producción
+# ✅ Middleware para forzar HTTPS en producción (respeta X-Forwarded-Proto de Railway/proxy)
 @app.middleware("http")
 async def https_redirect(request: Request, call_next):
-    if request.headers.get("x-forwarded-proto") == "http":
-        url = request.url.replace(scheme="https")
-        return RedirectResponse(url=url, status_code=307)
+    # Leer el header X-Forwarded-Proto que envía Railway
+    forwarded_proto = request.headers.get("x-forwarded-proto", "").lower()
+    
+    # Si vino por HTTP, redirigir a HTTPS manualmente (construyendo la URL HTTPS)
+    if forwarded_proto == "http":
+        # Obtener host desde X-Forwarded-Host o Host
+        host = request.headers.get("x-forwarded-host") or request.headers.get("host")
+        path = request.url.path
+        query = request.url.query
+        
+        # Construir URL HTTPS manualmente
+        redirect_url = f"https://{host}{path}"
+        if query:
+            redirect_url += f"?{query}"
+        
+        return RedirectResponse(url=redirect_url, status_code=307)
+    
     return await call_next(request)
 
 app.add_middleware(

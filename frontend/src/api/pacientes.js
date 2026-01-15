@@ -1,7 +1,7 @@
 import api from "./client";
 
 export async function getPacientes() {
-  const res = await api.get("/pacientes/");
+  const res = await api.get("/pacientes");
   return res.data;
 }
 

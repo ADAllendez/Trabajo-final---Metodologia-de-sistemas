@@ -1,12 +1,12 @@
 import api from "./client";
 
 export async function getMedicos() {
-  const res = await api.get("/medicos/");
+  const res = await api.get("/medicos");
   return res.data;
 }
 
 export async function crearMedico(data) {
-  const res = await api.post("/medicos/", data);
+  const res = await api.post("/medicos", data);
   return res.data;
 }
 

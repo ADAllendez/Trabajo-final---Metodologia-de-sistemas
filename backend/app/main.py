@@ -1,5 +1,6 @@
-from fastapi import FastAPI, Depends
+from fastapi import FastAPI, Depends, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import RedirectResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import text
 
@@ -10,6 +11,14 @@ app = FastAPI(
     title="Clinica Medica",
     version="1.0.0"
 )
+
+# ✅ Middleware para forzar HTTPS en producción
+@app.middleware("http")
+async def https_redirect(request: Request, call_next):
+    if request.headers.get("x-forwarded-proto") == "http":
+        url = request.url.replace(scheme="https")
+        return RedirectResponse(url=url, status_code=307)
+    return await call_next(request)
 
 app.add_middleware(
     CORSMiddleware,

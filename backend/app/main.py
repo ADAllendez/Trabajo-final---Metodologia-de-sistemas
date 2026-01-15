@@ -15,6 +15,10 @@ app = FastAPI(
 # ✅ Middleware para forzar HTTPS en producción (respeta X-Forwarded-Proto de Railway/proxy)
 @app.middleware("http")
 async def https_redirect(request: Request, call_next):
+    # No redirigir preflight requests de CORS (OPTIONS)
+    if request.method == "OPTIONS":
+        return await call_next(request)
+    
     # Leer el header X-Forwarded-Proto que envía Railway
     forwarded_proto = request.headers.get("x-forwarded-proto", "").lower()
     

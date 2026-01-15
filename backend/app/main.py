@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import RedirectResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import text
+from starlette.middleware.proxy_headers import ProxyHeadersMiddleware
 
 from app.config.database import engine, Base, get_db
 from app.routers import paciente, especialidad, medico, turno
@@ -11,6 +12,9 @@ app = FastAPI(
     title="Clinica Medica",
     version="1.0.0"
 )
+
+# Registrar ProxyHeadersMiddleware para que FastAPI use X-Forwarded-* (scheme, host)
+app.add_middleware(ProxyHeadersMiddleware, trusted_hosts="*")
 
 # ✅ Middleware para forzar HTTPS en producción
 @app.middleware("http")

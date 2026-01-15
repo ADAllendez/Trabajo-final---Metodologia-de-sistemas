@@ -338,7 +338,7 @@ function HomePage() {
               <div className="mt-6 flex justify-end gap-2">
                 <button
                   onClick={() =>
-                    window.open(`https://127.0.0.1:8000/turnos/${turnoSeleccionado.id_turno}/reporte?formato=pdf`, "_blank")
+                    window.open(`${process.env.REACT_APP_API_URL}/turnos/${turnoSeleccionado.id_turno}/reporte?formato=pdf`, "_blank")
                   }
                   className="rounded-md border border-slate-300 px-3 py-1.5 text-xs text-slate-700 hover:bg-slate-50"
                 >
@@ -346,7 +346,7 @@ function HomePage() {
                 </button>
                 <button
                   onClick={() =>
-                    window.open(`https://127.0.0.1:8000/turnos/${turnoSeleccionado.id_turno}/reporte?formato=xlsx`, "_blank")
+                    window.open(`${process.env.REACT_APP_API_URL}/turnos/${turnoSeleccionado.id_turno}/reporte?formato=xlsx`, "_blank")
                   }
                   className="rounded-md border border-slate-300 px-3 py-1.5 text-xs text-slate-700 hover:bg-slate-50"
                 >

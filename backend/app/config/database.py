@@ -14,6 +14,8 @@ MYSQL_DB = os.getenv("MYSQLDATABASE") or os.getenv("MYSQL_DB")
 
 print("MYSQL_HOST =", MYSQL_HOST)
 print("MYSQL_PORT =", MYSQL_PORT)
+if not all([MYSQL_USER, MYSQL_PASSWORD, MYSQL_HOST, MYSQL_DB]):
+    raise RuntimeError("❌ Variables de entorno MySQL no cargadas correctamente")
 
 DATABASE_URL = (
     f"mysql+aiomysql://{MYSQL_USER}:{MYSQL_PASSWORD}"

@@ -1,8 +1,10 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
-from app.config.database import engine, Base
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import text
+
+from app.config.database import engine, Base, get_db
 from app.routers import paciente, especialidad, medico, turno
-from sqlalchemy.ext.asyncio import AsyncEngine
 
 app = FastAPI(
     title="Clinica Medica",
@@ -22,15 +24,23 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-#@app.on_event("startup")
-#async def startup():
-    #async with engine.begin() as conn:
-#        await conn.run_sync(Base.metadata.create_all)
+# 🚫 NO crear tablas automáticamente en Railway
+# @app.on_event("startup")
+# async def startup():
+#     async with engine.begin() as conn:
+#         await conn.run_sync(Base.metadata.create_all)
 
+# 📌 ROUTERS
 app.include_router(paciente.router, prefix="/pacientes", tags=["Pacientes"])
 app.include_router(especialidad.router, prefix="/especialidades", tags=["Especialidades"])
 app.include_router(medico.router, prefix="/medicos", tags=["Medicos"])
 app.include_router(turno.router, prefix="/turnos", tags=["Turnos"])
+
+# 🧪 TEST DE CONEXIÓN A MYSQL
+@app.get("/db-test")
+async def db_test(db: AsyncSession = Depends(get_db)):
+    result = await db.execute(text("SELECT 1"))
+    return {"db": result.scalar()}
 
 @app.get("/")
 async def root():

@@ -1,6 +1,6 @@
 from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
-from starlette.middleware.proxy_headers import ProxyHeadersMiddleware
+from fastapi.middleware.trustedhost import TrustedHostMiddleware
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import text
 
@@ -13,10 +13,10 @@ app = FastAPI(
     redirect_slashes=False
 )
 
-# 🔧 SOLUCIÓN PARA RAILWAY: ProxyHeadersMiddleware
+# 🔧 SOLUCIÓN PARA RAILWAY: TrustedHostMiddleware
 # Railway termina HTTPS y envía HTTP internamente
 # Esto hace que FastAPI respete X-Forwarded-Proto: https
-app.add_middleware(ProxyHeadersMiddleware, trusted_hosts="*")
+app.add_middleware(TrustedHostMiddleware, allowed_hosts=["*"])
 
 app.add_middleware(
     CORSMiddleware,

@@ -1,15 +1,22 @@
 from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
+from starlette.middleware.proxy_headers import ProxyHeadersMiddleware
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import text
 
 from app.config.database import engine, Base, get_db
-from app.routers import paciente, especialidad, medico, turno
+from app.routers import paciente, especialidad, medico, turno, consultas
 
 app = FastAPI(
     title="Clinica Medica",
-    version="1.0.0"
+    version="1.0.0",
+    redirect_slashes=False
 )
+
+# 🔧 SOLUCIÓN PARA RAILWAY: ProxyHeadersMiddleware
+# Railway termina HTTPS y envía HTTP internamente
+# Esto hace que FastAPI respete X-Forwarded-Proto: https
+app.add_middleware(ProxyHeadersMiddleware, trusted_hosts="*")
 
 app.add_middleware(
     CORSMiddleware,
@@ -37,6 +44,7 @@ app.include_router(paciente.router, prefix="/pacientes", tags=["Pacientes"])
 app.include_router(especialidad.router, prefix="/especialidades", tags=["Especialidades"])
 app.include_router(medico.router, prefix="/medicos", tags=["Medicos"])
 app.include_router(turno.router, prefix="/turnos", tags=["Turnos"])
+app.include_router(consultas.router)
 
 # 🧪 TEST DE CONEXIÓN A MYSQL
 @app.get("/db-test")

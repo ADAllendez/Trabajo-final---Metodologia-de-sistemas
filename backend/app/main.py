@@ -1,6 +1,5 @@
 from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.middleware.trustedhost import TrustedHostMiddleware
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import text
 
@@ -12,11 +11,6 @@ app = FastAPI(
     version="1.0.0",
     redirect_slashes=False
 )
-
-# 🔧 SOLUCIÓN PARA RAILWAY: TrustedHostMiddleware
-# Railway termina HTTPS y envía HTTP internamente
-# Esto hace que FastAPI respete X-Forwarded-Proto: https
-app.add_middleware(TrustedHostMiddleware, allowed_hosts=["*"])
 
 app.add_middleware(
     CORSMiddleware,

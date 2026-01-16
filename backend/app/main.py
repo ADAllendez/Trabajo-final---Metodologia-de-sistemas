@@ -8,8 +8,7 @@ from app.routers import paciente, especialidad, medico, turno, consultas
 
 app = FastAPI(
     title="Clinica Medica",
-    version="1.0.0",
-    redirect_slashes=False
+    version="1.0.0"
 )
 
 app.add_middleware(
@@ -19,8 +18,11 @@ app.add_middleware(
         "https://127.0.0.1:5173",
         "https://localhost:3000",
         "https://127.0.0.1:3000",
-        "https://trabajo-final-metodologia-de-sistem.vercel.app"
-
+        "https://trabajo-final-metodologia-de-sistem.vercel.app",
+        "http://localhost:5173",
+        "http://127.0.0.1:5173",
+        "http://localhost:3000",
+        "http://127.0.0.1:3000",
     ],
     allow_credentials=True,
     allow_methods=["*"],
